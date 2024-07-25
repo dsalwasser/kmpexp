@@ -1,0 +1,46 @@
+# An example configuration for a KaMinPar experiment.
+
+# Pick a system for which the jobfiles should be generated:
+# - generic          # any Linux system
+# - background       # any Linux system, run experiment via "nohup & disown"
+# - i10-exclusive    # i10 compute servers, run experiment via "exclusive" + background
+# - i10-nonexclusive # i10 compute servers, run experiment via "nonexclusive" + background
+#
+system = "generic"
+
+# Pick a "call wrapper" that should be used to invoke KaMinPar.
+# - none             # do not run with any call wrapper
+# - taskset          # use taskset to limit CPU affinity
+# - mpi              # use mpirun to limit CPU affinity
+#
+call-wrapper = "none"
+
+[Memory-Optimizations]
+graphs = "/path/to/benchmark-set/"
+processes = [1]
+threads = [4, 64]
+ks = [8, 32, 64, 128, 1024]
+epsilons = [0.03]
+seeds = [1, 2, 3, 4, 5]
+
+[Memory-Optimizations.Reference]
+git-url = "https://github.com/KaHIP/KaMinPar.git"
+# Optional: specify git branch [default: main]
+branch = "main"
+# Optional: specify build target (KaMinPar, dKaMinPar, or a benchmark) [default: KaMinPar]
+target = "KaMinPar"
+compile-flags = [
+    "-DKAMINPAR_ENABLE_HEAP_PROFILING=ON",
+    "-DKAMINPAR_64BIT_EDGE_IDS=On",
+    "-DKAMINPAR_64BIT_WEIGHTS=On",
+]
+args = ["-P default"]
+
+[Memory-Optimizations.Optimized]
+git-url = "https://github.com/KaHIP/KaMinPar.git"
+compile-flags = [
+    "-DKAMINPAR_ENABLE_HEAP_PROFILING=ON",
+    "-DKAMINPAR_64BIT_EDGE_IDS=On",
+    "-DKAMINPAR_64BIT_WEIGHTS=On",
+]
+args = ["-P memory"]
