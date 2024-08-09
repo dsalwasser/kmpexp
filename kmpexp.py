@@ -278,6 +278,8 @@ class Experiment:
                                     )
                                     if self.timeout > 0:
                                         cmd = f"timeout -v {self.timeout}m {cmd}"
+                                    if time_cmd:
+                                        cmd = f"{time_cmd} -v {cmd}"
 
                                     commands.append((graph, cmd))
                                     print(cmd, file=script)
@@ -365,6 +367,7 @@ with open("Experiment.toml", "rb") as file:
 
     system = fetch_or_default(data, "system", System.GENERIC, str)
     call_wrapper = fetch_or_default(data, "call-wrapper", CallWrapper.NONE, str)
+    time_cmd = fetch_or_default(data, "time-cmd", "", str)
 
     # Stores the hash values of the source files that are generated to only
     # fetch and build source files once.

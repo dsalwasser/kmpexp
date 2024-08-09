@@ -11,9 +11,14 @@ system = "generic"
 # Pick a "call wrapper" that should be used to invoke KaMinPar.
 # - none             # do not run with any call wrapper
 # - taskset          # use taskset to limit CPU affinity
-# - mpi              # use mpirun to limit CPU affinity
+# - mpi              # use mpirun to execute parallel jobs.
 #
 call-wrapper = "none"
+
+# Path of the GNU Time command, which displays information about the resources
+# used by that program. If the path is not defined, the time-wrapper is not used.
+#
+# time-cmd = "/usr/bin/time"
 
 [Memory-Optimizations]
 graphs = "/path/to/benchmark-set/"
@@ -25,7 +30,7 @@ seeds = [1, 2, 3, 4, 5]
 
 [Memory-Optimizations.Reference]
 git-url = "https://github.com/KaHIP/KaMinPar.git"
-# Optional: specify git branch [default: main]
+# Optional: specify git branch or commit [default: main]
 branch = "main"
 # Optional: specify build target (KaMinPar, dKaMinPar, or a benchmark) [default: KaMinPar]
 target = "KaMinPar"
@@ -36,7 +41,7 @@ compile-flags = [
 ]
 args = ["-P default"]
 
-[Memory-Optimizations.Optimized]
+[Memory-Optimizations.Optimizations]
 git-url = "https://github.com/KaHIP/KaMinPar.git"
 compile-flags = [
     "-DKAMINPAR_ENABLE_HEAP_PROFILING=ON",

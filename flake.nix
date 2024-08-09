@@ -1,5 +1,5 @@
 {
-  description = "Experiment generator for the shared-memory graph partitioner KaMinPar";
+  description = "Experiment generator for the graph partitioner KaMinPar";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -11,7 +11,8 @@
       pkgs = import nixpkgs { inherit system; };
 
       inputs = builtins.attrValues {
-        inherit (pkgs) cmake ninja python312 gcc14 tbb_2021_11 sparsehash mpi;
+        inherit (pkgs) cmake ninja python3 gcc14 tbb_2021_11 sparsehash mpi numactl pkg-config time;
+        inherit (pkgs.llvmPackages_18) openmp;
       };
 
       devShellInputs = builtins.attrValues {
@@ -55,7 +56,7 @@
         '';
 
         meta = {
-          description = "Experiment generator for the shared-memory graph partitioner KaMinPar.";
+          description = "Experiment generator for the graph partitioner KaMinPar.";
           homepage = "https://github.com/dsalwasser/kmpexp";
           license = pkgs.lib.licenses.mit;
           mainProgram = "kmpexp.py";
