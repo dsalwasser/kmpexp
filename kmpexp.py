@@ -11,6 +11,7 @@ files, which run the actual experiments.
 import hashlib
 import inspect
 import os
+import subprocess
 from enum import Enum
 from os import listdir, makedirs
 from os.path import abspath, dirname, isdir, isfile, join
@@ -51,11 +52,13 @@ def exec(cmd):
     """Executes a command and halts the program if the command fails."""
 
     print(f"  $ {Colors.CMD}{cmd}{Colors.END}")
-    ret_val = os.system(f"{cmd} 2>&1 | sed 's/^/  | /'; exit ${{PIPESTATUS[0]}}") >> 8
+    full_cmd = f"{cmd} 2>&1 | sed 's/^/  | /'; exit ${{PIPESTATUS[0]}}"
+    result = subprocess.run(["bash", "-c", full_cmd], text=True)
 
-    print("  `-- Exit code: " + str(ret_val) + "\n")
-    if ret_val != 0:
-        err("Failed to run the above command!")
+    if result.returncode == 0:
+        print("  `-- Exit code: 0\n")
+    else:
+        err("  `-- Exit code: " + str(result.returncode) + "\n")
 
 
 def fetch_check_value(data, key, type):
@@ -135,6 +138,8 @@ class System(str, Enum):
                 return f"nohup exclusive bash -- {cmd} &\ndisown"
             case System.i10_NONEXCLUSIVE:
                 return f"nohup nonexclusive bash -- {cmd} &\ndisown"
+            case _:
+                err(f"Unexpected system {system}.")
 
 
 class CallWrapper(str, Enum):
@@ -154,6 +159,8 @@ class CallWrapper(str, Enum):
                 return f"taskset -c 0-{num_threads - 1} {cmd}"
             case CallWrapper.MPI:
                 return f"mpirun -n {num_processes} --bind-to core --map-by socket:PE={num_threads} {cmd}"
+            case _:
+                err(f"Unexpected call wrapper {call_wrapper}.")
 
 
 class Experiment:
@@ -219,6 +226,7 @@ class Experiment:
             algorithm.fetch()
             algorithm.build()
 
+        num_graphs = len(self.graphs)
         nl = "\n                "  # Cannot explicitly use backslash in f-string; therefore use this workaround
         log(
             f"""
@@ -226,7 +234,7 @@ class Experiment:
             - Binary: {Colors.FILE}{algorithm.binary_path()}{Colors.END}
             - Generated arguments:
                 -T {nl + "-H" if algorithm.heap_profiled() else ""}
-                -G {Colors.ARGS}[{" ... ".join(self.graphs[::len(self.graphs) - 1])}]{Colors.END}
+                -G {Colors.ARGS}[{self.graphs[0] if num_graphs == 1 else " ... ".join(self.graphs[::num_graphs - 1])}]{Colors.END}
                 -t {Colors.ARGS}{self.threads}{Colors.END}
                 -k {Colors.ARGS}{self.ks}{Colors.END}
                 -e {Colors.ARGS}{self.epsilons}{Colors.END}
