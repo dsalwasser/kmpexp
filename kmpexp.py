@@ -310,7 +310,7 @@ class Algorithm:
         # Use fixed length of the hash value as an indicator of a detached head, which can result in false positives.
         detached_head = len(self.branch) == 40
 
-        if detached_head:
+        if detached_head and isdir(self.src_dir):
             log(
                 f"Directory {Colors.FILE}{self.src_dir}{Colors.END} for algorithm {Colors.ALGO}{self.name}{Colors.END} is in detached head: skipping fetch"
             )
