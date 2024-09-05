@@ -238,13 +238,16 @@ class Experiment:
                 -t {Colors.ARGS}{self.threads}{Colors.END}
                 -k {Colors.ARGS}{self.ks}{Colors.END}
                 -e {Colors.ARGS}{self.epsilons}{Colors.END}
-                -s {Colors.ARGS}{self.seeds}{Colors.END}
-            - Specified arguments:\
+                -s {Colors.ARGS}{self.seeds}{Colors.END}\
             """,
             clean=True,
         )
+        log("- Specified arguments:")
         for arg in algorithm.args:
             log(f"    {Colors.ARGS}{arg}{Colors.END}")
+        log("- Specified per-k arguments:")
+        for k, args in algorithm.per_k_args.items():
+            log(f"    k={k}: {Colors.ARGS}{", ".join(args)}{Colors.END}")
         log()
 
         script_name = f"./scripts/{self.name}/{algo_name}.sh"
@@ -268,6 +271,12 @@ class Experiment:
                                         )
 
                                     specified_arguments = " ".join(algorithm.args)
+                                    if str(k) in algorithm.per_k_args:
+                                        per_k_args = algorithm.per_k_args[str(k)]
+                                        if per_k_args:
+                                            specified_arguments += " "
+                                            specified_arguments += " ".join(per_k_args)
+
                                     log_file = abspath(
                                         f"{log_dir}/{Path(graph).stem}___P1x{num_processes}x{num_threads}_seed{seed}_eps{epsilon}_k{k}.log"
                                     )
@@ -300,6 +309,7 @@ class Algorithm:
         self.target = fetch_or_default(config, "target", "KaMinPar", str)
         self.compile_flags = fetch_check_values(config, "compile-flags", str)
         self.args = fetch_check_values(config, "args", str)
+        self.per_k_args = fetch_or_default(config, "per-k-args", {}, dict)
 
         self.hash = hash(self.git_url, self.branch, self.compile_flags)
         self.src_dir = abspath(f"./src/{self.hash}")

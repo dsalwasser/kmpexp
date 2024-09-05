@@ -16,19 +16,19 @@ system = "generic"
 call-wrapper = "none"
 
 # Path of the GNU Time command, which displays information about the resources
-# used by that program. If the path is not defined, the time-wrapper is not used.
+# used by a program. If the path is not defined, the time-wrapper is not used.
 #
 # time-cmd = "/usr/bin/time"
 
-[Memory-Optimizations]
+[Graph-Compression]
 graphs = "/path/to/benchmark-set/"
 processes = [1]
 threads = [4, 64]
-ks = [8, 32, 64, 128, 1024]
+ks = [8, 64, 128, 1024, 30000]
 epsilons = [0.03]
 seeds = [1, 2, 3, 4, 5]
 
-[Memory-Optimizations.Reference]
+[Graph-Compression.Reference]
 git-url = "https://github.com/KaHIP/KaMinPar.git"
 # Optional: specify git branch or commit [default: main]
 branch = "main"
@@ -39,13 +39,15 @@ compile-flags = [
     "-DKAMINPAR_64BIT_EDGE_IDS=On",
     "-DKAMINPAR_64BIT_WEIGHTS=On",
 ]
-args = ["-P default"]
+args = ["--node-order external-deg-buckets"]
+per-k-args = { 30000 = ["-P largek"] }
 
-[Memory-Optimizations.Optimizations]
+[Graph-Compression.Compression]
 git-url = "https://github.com/KaHIP/KaMinPar.git"
 compile-flags = [
     "-DKAMINPAR_ENABLE_HEAP_PROFILING=ON",
     "-DKAMINPAR_64BIT_EDGE_IDS=On",
     "-DKAMINPAR_64BIT_WEIGHTS=On",
 ]
-args = ["-P memory"]
+args = ["--node-order external-deg-buckets", "--compress"]
+per-k-args = { 30000 = ["-P largek"] }
