@@ -12,7 +12,7 @@
 
       inputs = builtins.attrValues {
         inherit (pkgs) cmake ninja python3 gcc14 tbb_2021_11 sparsehash mpi numactl pkg-config time;
-        inherit (pkgs.llvmPackages_18) openmp;
+        inherit (pkgs.llvmPackages_19) openmp;
       };
 
       devShellInputs = builtins.attrValues {
@@ -31,7 +31,7 @@
           '';
         };
 
-        clang = (pkgs.mkShell.override { stdenv = pkgs.llvmPackages_18.stdenv; }) {
+        clang = (pkgs.mkShell.override { stdenv = pkgs.llvmPackages_19.stdenv; }) {
           packages = (pkgs.lib.lists.remove pkgs.gcc14 inputs) ++ devShellInputs;
 
           shellHook = ''
