@@ -247,7 +247,7 @@ class Experiment:
             log(f"    {Colors.ARGS}{arg}{Colors.END}")
         log("- Specified per-k arguments:")
         for k, args in algorithm.per_k_args.items():
-            log(f"    k={k}: {Colors.ARGS}{", ".join(args)}{Colors.END}")
+            log(f"    k={k}: {Colors.ARGS}{', '.join(args)}{Colors.END}")
         log()
 
         script_name = f"./scripts/{self.name}/{algo_name}.sh"
