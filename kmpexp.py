@@ -123,10 +123,11 @@ class System(str, Enum):
 
     GENERIC = "generic"
     BACKGROUND = "background"
+    SPACK = "spack"
     i10_EXCLUSIVE = "i10-exclusive"
     i10_NONEXCLUSIVE = "i10-nonexclusive"
 
-    def generate_wrapper(system, cmd):
+    def generate_wrapper(system, cmd, spack_env):
         """Wraps a command that is used to invoke a KaMinPar experiment."""
 
         match system:
@@ -134,6 +135,8 @@ class System(str, Enum):
                 return f"bash {cmd}"
             case System.BACKGROUND:
                 return f"nohup bash -- {cmd} &\ndisown"
+            case System.SPACK:
+                return f"spack env activate {spack_env}\nbash {cmd}"
             case System.i10_EXCLUSIVE:
                 return f"nohup exclusive bash -- {cmd} &\ndisown"
             case System.i10_NONEXCLUSIVE:
@@ -376,8 +379,14 @@ with open("Experiment.toml", "rb") as file:
     data = tomllib.load(file)
 
     system = fetch_or_default(data, "system", System.GENERIC, str)
+    spack_env = fetch_or_default(data, "spack-environment", "", str)
     call_wrapper = fetch_or_default(data, "call-wrapper", CallWrapper.NONE, str)
     time_cmd = fetch_or_default(data, "time-cmd", "", str)
+
+    if system == System.SPACK and not spack_env:
+        err(
+            "You have to specify a Spack environment when using Spack as the system option."
+        )
 
     # Stores the hash values of the source files that are generated to only
     # fetch and build source files once.
@@ -391,6 +400,7 @@ with open("Experiment.toml", "rb") as file:
     submit_name = "./submit.sh"
     with open(submit_name, "w") as submit:
         print("#!/usr/bin/env bash", file=submit)
+        print(f"cd {os.getcwd()}", file=submit)
 
         for name, config in data.items():
             if not isinstance(config, dict):
@@ -401,7 +411,7 @@ with open("Experiment.toml", "rb") as file:
             experiment = Experiment(name, config)
             script_name = experiment.generate()
 
-            print(System.generate_wrapper(system, script_name), file=submit)
+            print(System.generate_wrapper(system, script_name, spack_env), file=submit)
     make_executable(submit_name)
 
     # Generate a submission script that runs all commands by input graphs in
@@ -411,7 +421,11 @@ with open("Experiment.toml", "rb") as file:
     starter_all_name = "./scripts/ordered-starter.sh"
     with open(submit_all_name, "w") as submit_all:
         print("#!/usr/bin/env bash", file=submit_all)
-        print(System.generate_wrapper(system, starter_all_name), file=submit_all)
+        print(f"cd {os.getcwd()}", file=submit_all)
+        print(
+            System.generate_wrapper(system, starter_all_name, spack_env),
+            file=submit_all,
+        )
 
         with open(starter_all_name, "w") as starter_all:
             print("#!/usr/bin/env bash", file=starter_all)

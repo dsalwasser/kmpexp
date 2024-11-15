@@ -3,10 +3,17 @@
 # Pick a system for which the jobfiles should be generated:
 # - generic          # any Linux system
 # - background       # any Linux system, run experiment via "nohup & disown"
+# - spack            # any Linux system with a Spack installation, activate specified Spack
+#                      environment and run experiment via background
 # - i10-exclusive    # i10 compute servers, run experiment via "exclusive" + background
 # - i10-nonexclusive # i10 compute servers, run experiment via "nonexclusive" + background
 #
 system = "generic"
+
+# Name of the Spack environment to activate before running the experiment. Must be specified if
+# Spack is used as the system option.
+#
+# spack-environment = "KaMinPar"
 
 # Pick a "call wrapper" that should be used to invoke KaMinPar.
 # - none             # do not run with any call wrapper
