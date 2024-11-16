@@ -364,7 +364,7 @@ class Algorithm:
         if self.target == "dKaMinPar":
             return abspath(f"{self.src_dir}/build/apps/dKaMinPar")
 
-        return abspath(f"{self.src_dir}/build/benchmarks/{self.target}")
+        return abspath(f"{self.src_dir}/build/apps/benchmarks/{self.target}")
 
     def heap_profiled(self):
         """Returns whether the heap profiler is enabled for this KaMinPar algorithm."""
