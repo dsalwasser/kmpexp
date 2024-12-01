@@ -15,6 +15,7 @@ system = "generic"
 
 # Pick a "call wrapper" that should be used to invoke KaMinPar.
 # - none             # do not run with any call wrapper
+# - perf             # use perf to obtain hardware performance counters
 # - taskset          # use taskset to limit CPU affinity
 # - mpi              # use mpirun to execute parallel jobs.
 #

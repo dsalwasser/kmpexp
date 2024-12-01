@@ -11,12 +11,13 @@
       pkgs = import nixpkgs { inherit system; };
 
       inputs = builtins.attrValues {
-        inherit (pkgs) cmake ninja python3 gcc14 tbb_2021_11 sparsehash mpi numactl pkg-config time;
+        inherit (pkgs) cmake ninja python3 gcc14 tbb_2021_11 sparsehash mpi numactl pkg-config;
         inherit (pkgs.llvmPackages_19) openmp;
       };
 
       devShellInputs = builtins.attrValues {
-        inherit (pkgs) fish ruff ccache;
+        inherit (pkgs) fish ruff ccache time;
+        inherit (pkgs.linuxPackages_latest) perf;
       };
     in
     {

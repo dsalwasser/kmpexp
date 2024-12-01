@@ -143,6 +143,7 @@ class CallWrapper(str, Enum):
     """Wrapper to use when invoking KaMinPar."""
 
     NONE = "none"
+    PERF = "perf"
     TASKSET = "taskset"
     MPI = "mpi"
 
@@ -152,6 +153,8 @@ class CallWrapper(str, Enum):
         match call_wrapper:
             case CallWrapper.NONE:
                 return cmd
+            case CallWrapper.PERF:
+                return f"perf stat -d -d -d {cmd}"
             case CallWrapper.TASKSET:
                 return f"taskset -c 0-{num_threads - 1} {cmd}"
             case CallWrapper.MPI:
