@@ -1,12 +1,10 @@
 # An example configuration for a KaMinPar experiment.
 
 # Pick a system for which the jobfiles should be generated:
-# - generic          # any Linux system
-# - background       # any Linux system, run experiment via "nohup & disown"
-# - spack            # any Linux system with a Spack installation, activate specified Spack
-#                      environment and run experiment via background
-# - i10-exclusive    # i10 compute servers, run experiment via "exclusive" + background
-# - i10-nonexclusive # i10 compute servers, run experiment via "nonexclusive" + background
+# - generic          # any Linux system; run experiment via bash
+# - background       # any Linux system; run experiment via "nohup & disown"
+# - spack            # any Linux system with a Spack installation; activate specified Spack
+#                      environment and run experiment via generic
 #
 system = "generic"
 

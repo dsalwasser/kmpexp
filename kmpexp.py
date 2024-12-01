@@ -124,8 +124,6 @@ class System(str, Enum):
     GENERIC = "generic"
     BACKGROUND = "background"
     SPACK = "spack"
-    i10_EXCLUSIVE = "i10-exclusive"
-    i10_NONEXCLUSIVE = "i10-nonexclusive"
 
     def generate_wrapper(system, cmd, spack_env):
         """Wraps a command that is used to invoke a KaMinPar experiment."""
@@ -137,10 +135,6 @@ class System(str, Enum):
                 return f"nohup bash -- {cmd} &\ndisown"
             case System.SPACK:
                 return f"spack env activate {spack_env}\nbash {cmd}"
-            case System.i10_EXCLUSIVE:
-                return f"nohup exclusive bash -- {cmd} &\ndisown"
-            case System.i10_NONEXCLUSIVE:
-                return f"nohup nonexclusive bash -- {cmd} &\ndisown"
             case _:
                 err(f"Unexpected system {system}.")
 
